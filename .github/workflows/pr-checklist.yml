@@ -1,28 +1,20 @@
-name: PR Checklist Validator
+name: PR Reviewer Checklist
 
 on:
   pull_request:
-    types: [opened, edited, synchronize]
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
-  validate-checklist:
+  pr-checklist:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-
-      - name: Build with Maven Wrapper
-        run: ./mvnw clean package
-
-      - name: Run Checklist Validator
-        run: |
-          java -jar target/Pr-Checklist-0.0.1-SNAPSHOT.jar \
-            --github-token ${{ secrets.GITHUB_TOKEN }} \
-            --pr-number ${{ github.event.pull_request.number }} \
-            --repo ${{ github.repository }}
+    - name: Run PR Checklist Validator
+      run: |
+        curl -X POST http://localhost:8080/checklist \
+        -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        -H "Content-Type: application/json" \
+        -d '{"pr_number": "${{ github.event.pull_request.number }}"}'
