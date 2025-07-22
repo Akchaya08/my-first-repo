@@ -17,10 +17,12 @@ jobs:
         with:
           java-version: '17'
 
-      - name: Build and Run Checklist Validator
+      - name: Build with Maven Wrapper
+        run: ./mvnw clean package
+
+      - name: Run Checklist Validator
         run: |
-          ./gradlew build
-          java -jar build/libs/your-checklist-app.jar \
+          java -jar target/Pr-Checklist-0.0.1-SNAPSHOT.jar \
             --github-token ${{ secrets.GITHUB_TOKEN }} \
             --pr-number ${{ github.event.pull_request.number }} \
             --repo ${{ github.repository }}
