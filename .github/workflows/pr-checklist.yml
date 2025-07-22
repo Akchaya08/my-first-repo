@@ -1,0 +1,26 @@
+name: PR Checklist Validator
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate-checklist:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+
+      - name: Build and Run Checklist Validator
+        run: |
+          ./gradlew build
+          java -jar build/libs/your-checklist-app.jar \
+            --github-token ${{ secrets.GITHUB_TOKEN }} \
+            --pr-number ${{ github.event.pull_request.number }} \
+            --repo ${{ github.repository }}
